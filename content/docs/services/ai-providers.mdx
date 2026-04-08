@@ -1,0 +1,76 @@
+---
+title: AI Providers
+description: Configure Claude, OpenAI, or Ollama for content generation.
+---
+
+Contentora supports multiple AI providers. You need at least one active provider configured before users can generate content.
+
+## Supported Providers
+
+| Provider | Models | Notes |
+| --- | --- | --- |
+| **Claude** | claude-sonnet-4-6, claude-haiku-4-5, etc. | Via Anthropic SDK |
+| **OpenAI** | gpt-4.1, gpt-4.1-mini, etc. | Direct API or compatible proxies |
+| **Ollama** | llama3, mistral, etc. | Local models, OpenAI-compatible API |
+
+## Adding a Provider
+
+1. Log in as admin
+2. Navigate to **Admin > AI Providers**
+3. Click **Add Provider**
+4. Fill in the configuration:
+
+| Field | Description |
+| --- | --- |
+| Name | Display name (e.g., "Claude Production") |
+| Provider | `claude`, `openai`, or `ollama` |
+| API Key | Your API key from the provider |
+| Model ID | Default model to use (e.g., `claude-sonnet-4-6-20250514`) |
+| Base URL | Custom API endpoint (required for Ollama, optional for OpenAI proxies) |
+| Active | Toggle to enable/disable |
+
+5. Mark it as **Active**
+
+## Claude Setup
+
+1. Get an API key from [console.anthropic.com](https://console.anthropic.com)
+2. Add a provider with type `claude`
+3. Enter your API key
+4. Set the model ID (e.g., `claude-sonnet-4-6-20250514`)
+
+## OpenAI Setup
+
+1. Get an API key from [platform.openai.com](https://platform.openai.com)
+2. Add a provider with type `openai`
+3. Enter your API key
+4. Set the model ID (e.g., `gpt-4.1`)
+
+To use an OpenAI-compatible proxy (Azure, Together AI, etc.), set the **Base URL** to the proxy endpoint.
+
+## Ollama Setup (Local AI)
+
+Ollama runs AI models locally with zero API costs.
+
+1. Install Ollama from [ollama.com](https://ollama.com)
+2. Pull a model: `ollama pull llama3`
+3. Add a provider with type `ollama`
+4. Set Base URL to `http://localhost:11434/v1`
+5. Set Model ID to the pulled model name (e.g., `llama3`)
+6. API Key can be any non-empty string (e.g., `ollama`)
+
+## Plan Assignment
+
+Each subscription plan can be assigned a default AI provider. When a user generates content, their plan's provider is used unless overridden at the admin level.
+
+Configure plan providers at **Admin > Plans** by editing each plan and selecting an AI model.
+
+![AI Providers](/images/admin/providers.png)
+
+## Generation Parameters
+
+The AI service uses these defaults:
+
+| Parameter | Value |
+| --- | --- |
+| Max Tokens | Configured per provider, falls back to 2048 |
+| Temperature | Configured per provider, falls back to 0.7 |

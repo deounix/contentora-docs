@@ -1,0 +1,90 @@
+---
+title: Environment Variables
+description: Complete reference for all environment variables used by Contentora.
+---
+
+All configuration lives in a single `.env` file at the repository root. The fastest way to create it is with the setup wizard:
+
+```bash
+yarn setup
+```
+
+This prompts for your database, Redis, and server settings, generates secure JWT secrets, tests connections, and writes the `.env` file.
+
+Alternatively, copy the example file and edit it manually:
+
+```bash
+cp .env.example .env
+```
+
+Both the engine and studio read from this file. The engine loads it via Node's `--env-file` flag.
+
+## Server
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PORT` | `5050` | Engine API port |
+| `NODE_ENV` | `development` | `development`, `production`, or `test` |
+| `BODY_LIMIT` | `2mb` | Maximum JSON request body size |
+| `REQUEST_TIMEOUT_MS` | `30000` | Per-request timeout in milliseconds |
+
+## Database
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `MONGODB_URI` | — | MongoDB connection string (required) |
+| `MONGODB_POOL_SIZE` | `10` | Maximum concurrent connections |
+| `MONGODB_SERVER_TIMEOUT_MS` | `5000` | Server selection timeout |
+| `MONGODB_SOCKET_TIMEOUT_MS` | `45000` | Socket operation timeout |
+
+## Authentication
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `JWT_SECRET` | — | Access token signing secret (required) |
+| `JWT_REFRESH_SECRET` | — | Refresh token signing secret (required) |
+| `JWT_EXPIRE` | `15m` | Access token lifetime |
+| `JWT_REFRESH_EXPIRE` | `7d` | Refresh token lifetime |
+
+<Callout type="warn">
+Change `JWT_SECRET` and `JWT_REFRESH_SECRET` from their example values before deploying. Use a cryptographically random string of at least 32 characters.
+</Callout>
+
+## Redis
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `REDIS_URL` | — | Redis connection string (optional) |
+| `REDIS_MAX_RETRIES` | `3` | Max retries per Redis request |
+
+Redis is optional. Without it, rate limiting falls back to in-memory and job queues process synchronously.
+
+## Client
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `CLIENT_URL` | `http://localhost:5173` | Frontend URL for CORS and email links |
+
+## Rate Limiting
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `RATE_LIMIT_API_WINDOW_MS` | `900000` | API window (15 minutes) |
+| `RATE_LIMIT_API_MAX` | `2000` | Max API requests per window |
+| `RATE_LIMIT_AUTH_WINDOW_MS` | `900000` | Auth window (15 minutes) |
+| `RATE_LIMIT_AUTH_MAX` | `100` | Max auth attempts per window |
+| `RATE_LIMIT_GENERATE_WINDOW_MS` | `60000` | Generate window (1 minute) |
+| `RATE_LIMIT_GENERATE_MAX` | `120` | Max generation requests per window |
+
+Admin users bypass API and generation rate limits.
+
+## Queue Workers
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `QUEUE_GENERATE_CONCURRENCY` | `3` | Concurrent content generation jobs |
+| `QUEUE_WORKFLOW_CONCURRENCY` | `2` | Concurrent workflow pipeline jobs |
+| `QUEUE_BULK_CONCURRENCY` | `2` | Concurrent bulk generation jobs |
+| `QUEUE_REPURPOSE_CONCURRENCY` | `3` | Concurrent repurpose jobs |
+
+Increase concurrency if your server has headroom and your AI provider rate limits allow it.

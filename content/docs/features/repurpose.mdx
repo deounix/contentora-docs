@@ -1,0 +1,49 @@
+---
+title: Repurpose
+description: Transform long-form content into multiple social media formats.
+---
+
+The repurpose feature takes a blog post or article and generates six social-optimized versions in a single AI call.
+
+## Outputs
+
+From one piece of content, users get:
+
+1. **5 Tweets** — short-form social posts
+2. **LinkedIn Post** — professional format
+3. **Email Newsletter** — subscriber-ready content
+4. **Instagram Caption** — visual platform copy
+5. **YouTube Script** — video content outline
+6. **Thread** — multi-part thread format
+
+## How It Works
+
+1. User pastes their blog post or long-form content
+2. Selects language and tone
+3. The engine sends the content to the AI provider with a structured JSON output prompt
+4. The AI returns all 6 formats in a single response
+5. Credits are deducted based on total word count across all outputs
+
+## Configuration
+
+Admins can configure a dedicated AI provider for repurposing:
+
+1. Go to **Admin > Repurpose Settings**
+2. Select an AI provider (or leave as "plan default")
+3. Optionally override the model ID
+4. Set max tokens (default: 4096)
+
+If no repurpose-specific provider is configured, each user's plan provider is used.
+
+![Repurpose](/images/user/repurpose.png)
+
+## API Usage
+
+Via the REST API:
+
+```bash
+curl -X POST -H "Authorization: Bearer ct_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "content": "Your blog post text...", "language": "English", "tone": "Professional" }' \
+  https://your-domain.com/api/v1/repurpose
+```

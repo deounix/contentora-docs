@@ -1,0 +1,77 @@
+---
+title: Authentication
+description: JWT sessions and API token authentication.
+---
+
+Contentora supports two authentication methods: JWT sessions for the web app, and API tokens for programmatic access.
+
+## JWT Sessions (Web App)
+
+The Studio frontend uses JWT-based authentication:
+
+1. User logs in via `POST /api/auth/login` with email and password
+2. Server returns an `accessToken` (15m) and `refreshToken` (7d)
+3. The access token is sent as `Authorization: Bearer {token}` on subsequent requests
+4. When the access token expires, the client calls `POST /api/auth/refresh` with the refresh token
+
+### Session Endpoints
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| POST | `/api/auth/register` | Create account |
+| POST | `/api/auth/login` | Sign in |
+| POST | `/api/auth/refresh` | Refresh access token |
+| POST | `/api/auth/forgot-password` | Request password reset email |
+| POST | `/api/auth/reset-password/:token` | Reset password with token |
+| GET | `/api/auth/verify/:token` | Verify email address |
+
+## API Tokens (Programmatic Access)
+
+For integrations and scripts, users create scoped API tokens from the Studio dashboard.
+
+### Creating a Token
+
+1. Go to **Developer > API Tokens** in the Studio
+2. Click **Create Token**
+3. Set a name, select scopes, and choose an expiration
+4. Copy the token immediately — it is shown only once
+
+### Using a Token
+
+Send the token in the `Authorization` header:
+
+```bash
+curl -H "Authorization: Bearer ct_a1b2c3d4..." \
+  https://your-domain.com/api/v1/templates
+```
+
+All API tokens start with the `ct_` prefix.
+
+### Token Scopes
+
+Each token is limited to specific operations:
+
+| Scope | Access |
+| --- | --- |
+| `generate` | Create content, check job status, list generations |
+| `templates` | List and read templates |
+| `usage` | Read usage statistics |
+| `workflows` | Run workflows, check status |
+| `bulk` | Upload CSV and run bulk jobs |
+| `brand-voices` | Manage brand voice profiles |
+| `projects` | Manage projects |
+| `repurpose` | Repurpose content |
+| `support` | Manage support tickets |
+
+A token without the required scope for an endpoint receives a `403 Forbidden` response.
+
+![API Tokens](/images/user/api-tokens.png)
+
+![API Docs](/images/user/api-docs.png)
+
+### Token Lifecycle
+
+- Tokens can be revoked at any time from the dashboard
+- Expired tokens return `401 Unauthorized`
+- The `lastUsedAt` timestamp is updated on each request
+- Token secrets are stored as SHA-256 hashes — the raw token cannot be recovered

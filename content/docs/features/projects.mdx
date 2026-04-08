@@ -1,0 +1,37 @@
+---
+title: Projects
+description: Organize generated content into projects.
+---
+
+Projects provide a way to group related generations together, making it easy to manage content for different campaigns, clients, or topics.
+
+## Creating a Project
+
+1. Go to **Projects** in the sidebar
+2. Click **New Project**
+3. Enter a name, description, and choose a color/icon
+
+## Assigning Content to Projects
+
+When generating content (single generation, workflow, or repurpose), select a project from the dropdown. The generated content is automatically associated with that project.
+
+## Project Detail View
+
+Click on a project to see all its generations. From the project detail page you can:
+
+- View all generations grouped by date
+- Filter by template or status
+- Quick-copy any generation
+- Open generations in the editor
+- Export content
+
+![Projects](/images/user/projects.png)
+
+## API Access
+
+Projects are fully accessible via the REST API with the `projects` scope:
+
+```bash
+curl -H "Authorization: Bearer ct_..." \
+  https://your-domain.com/api/v1/projects
+```

@@ -1,0 +1,48 @@
+---
+title: Webhooks
+description: Stripe webhook integration for subscription events.
+---
+
+Contentora listens for Stripe webhook events to keep subscription state in sync.
+
+## Endpoint
+
+```
+POST /api/billing/webhook
+```
+
+This endpoint receives raw JSON payloads from Stripe and verifies the signature using the webhook secret configured in **Admin > Settings**.
+
+## Handled Events
+
+| Event | Action |
+| --- | --- |
+| `checkout.session.completed` | Activates subscription, assigns plan to user |
+| `invoice.payment_succeeded` | Updates subscription period, resets credits |
+| `invoice.payment_failed` | Logs failure, marks subscription at risk |
+| `customer.subscription.updated` | Syncs plan changes (upgrades/downgrades) |
+| `customer.subscription.deleted` | Downgrades user to Free plan |
+
+## Local Development
+
+Use the Stripe CLI to forward webhook events to your local server:
+
+```bash
+stripe listen --forward-to localhost:5050/api/billing/webhook
+```
+
+The CLI will output a webhook signing secret (starts with `whsec_`). Add this to **Admin > Settings > Stripe Webhook Secret**.
+
+## Production Setup
+
+In the Stripe Dashboard:
+
+1. Go to **Developers > Webhooks**
+2. Click **Add endpoint**
+3. URL: `https://your-domain.com/api/billing/webhook`
+4. Select the events listed above
+5. Copy the signing secret to your admin settings
+
+## Signature Verification
+
+Every incoming webhook is verified against the Stripe webhook secret. Requests with invalid signatures are rejected with `400 Bad Request`. This prevents forged webhook events from modifying subscription state.

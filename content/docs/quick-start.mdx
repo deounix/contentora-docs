@@ -1,0 +1,102 @@
+---
+title: Quick Start
+description: Get Contentora running locally in under 5 minutes.
+---
+
+## Prerequisites
+
+- **Node.js 22+** — required for `--env-file` support
+- **Yarn 1.x** — the project uses Yarn workspaces
+- **Docker** — for MongoDB and Redis (or install them locally)
+
+## 1. Install Dependencies
+
+```bash
+cd contentora
+yarn install
+```
+
+## 2. Start Infrastructure
+
+```bash
+docker compose up -d mongodb redis
+```
+
+This starts MongoDB on port `27017` and Redis on port `6380`.
+
+## 3. Run Setup
+
+```bash
+yarn setup
+```
+
+The interactive setup wizard will:
+
+- Ask for your MongoDB and Redis connection details
+- Test both connections
+- Generate secure JWT secrets automatically
+- Configure the API port and frontend URL
+- Write the `.env` file
+
+Accept the defaults if you're using the Docker services from step 2.
+
+<Callout type="info">
+You can also manually copy `.env.example` to `.env` and edit it. See [Environment Variables](/docs/configuration/environment-variables) for the full reference.
+</Callout>
+
+## 4. Seed the Database
+
+```bash
+yarn seed
+```
+
+This creates:
+
+- **3 subscription plans** (Free, Pro, Business)
+- **86 content templates** across all categories
+- **Admin account** — `admin@contentora.com` / `admin123`
+
+## 5. Start Development
+
+```bash
+yarn dev
+```
+
+- **Engine** runs at `http://localhost:5050`
+- **Studio** runs at `http://localhost:5173`
+
+Open `http://localhost:5173` and log in with the admin credentials.
+
+![Login Page](/images/admin/login.png)
+
+## 6. Configure AI Providers
+
+Before generating content, set up at least one AI provider:
+
+1. Go to **Admin > AI Providers**
+2. Add a provider (Anthropic, OpenAI, or Ollama)
+3. Enter your API key
+4. Mark it as active
+
+You're ready to generate content.
+
+## Available Scripts
+
+| Command | Description |
+| --- | --- |
+| `yarn setup` | Interactive environment setup wizard |
+| `yarn dev` | Start engine + studio in development |
+| `yarn dev:engine` | Start backend only |
+| `yarn dev:studio` | Start frontend only |
+| `yarn dev:docs` | Start documentation site |
+| `yarn seed` | Populate database with initial data |
+| `yarn build` | Build the frontend for production |
+| `yarn start` | Start the production backend |
+| `yarn format` | Format code with Prettier |
+
+## Next Steps
+
+- [Environment Variables](/docs/configuration/environment-variables) — full reference
+- [AI Providers](/docs/services/ai-providers) — provider configuration
+- [Stripe](/docs/services/stripe) — payment setup
+- [Docker Deployment](/docs/deployment/docker) — production deployment

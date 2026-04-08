@@ -1,0 +1,56 @@
+---
+title: Image Generation
+description: Configure AI image generation with DALL-E or Stability AI.
+---
+
+Templates can optionally generate a featured image alongside the text content. Image generation is powered by OpenAI DALL-E or Stability AI.
+
+## Supported Providers
+
+| Provider | Model | Resolution |
+| --- | --- | --- |
+| OpenAI | DALL-E 3 | 1792x1024 |
+| Stability AI | SDXL 1.0 | 1344x768 |
+
+## Setup
+
+1. Go to **Admin > AI Providers**
+2. Add a provider with **Provider Type** set to `image`
+3. Enter your API key
+4. Mark as active
+
+### OpenAI DALL-E
+
+- Provider: `openai`
+- API Key: Your OpenAI API key (same key works for text and images)
+- Model: `dall-e-3`
+
+### Stability AI
+
+- Provider: `stability`
+- API Key: Your Stability AI API key from [platform.stability.ai](https://platform.stability.ai)
+- Model: `stable-diffusion-xl-1024-v1-0`
+
+## How It Works
+
+1. When a template has **Image Enabled** turned on, the engine generates an image prompt from the content
+2. The first 500 characters of the generated text are used as context for the image prompt
+3. The AI creates a concise image description (under 150 words)
+4. The image provider generates the image
+5. The image is saved to `/uploads/images/` as a PNG file
+
+## Plan Limits
+
+Image generation counts against the user's monthly image limit:
+
+| Plan | Images/Month |
+| --- | --- |
+| Free | 5 |
+| Pro | 100 |
+| Business | 500 |
+
+When the image limit is reached, content is still generated but the image is skipped. The output will include an `imageSkipped: true` flag.
+
+## Enabling Images on Templates
+
+In the admin panel, edit a template and toggle **Image Enabled**. This adds automatic image generation for that template.

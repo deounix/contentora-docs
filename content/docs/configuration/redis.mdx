@@ -1,0 +1,79 @@
+---
+title: Redis
+description: Redis setup for rate limiting, job queues, and caching.
+---
+
+Redis powers rate limiting and BullMQ job queues. It is **optional** — Contentora falls back to in-memory alternatives without it, but Redis is strongly recommended for production.
+
+## Docker (Recommended)
+
+```bash
+docker compose up -d redis
+```
+
+The docker-compose configuration:
+
+- Port mapping: `6380:6379` (host port 6380 to avoid conflicts)
+- Memory limit: 256 MB with `noeviction` policy
+- Append-only persistence enabled
+- Data persisted to a named volume
+
+```bash
+REDIS_URL=redis://localhost:6380
+```
+
+## Local Installation
+
+Install via your package manager:
+
+```bash
+# macOS
+brew install redis
+brew services start redis
+
+# Ubuntu/Debian
+sudo apt install redis-server
+sudo systemctl start redis
+```
+
+Default local connection:
+
+```bash
+REDIS_URL=redis://localhost:6379
+```
+
+## Configuration
+
+```bash
+REDIS_URL=redis://localhost:6380
+REDIS_MAX_RETRIES=3
+```
+
+The `REDIS_MAX_RETRIES` setting controls how many times a failed Redis command is retried before throwing an error.
+
+## What Redis Powers
+
+| Feature | Without Redis | With Redis |
+| --- | --- | --- |
+| Rate limiting | In-memory (per-process) | Distributed across instances |
+| Job queues | Synchronous processing | Async with BullMQ workers |
+| Job persistence | Lost on restart | Survives restarts |
+| Horizontal scaling | Not possible | Shared state across instances |
+
+## Verifying Connection
+
+Check the engine startup logs. You should see:
+
+```
+[redis] Connected
+[queue] Generate worker started
+[queue] Workflow worker started
+[queue] Bulk worker started
+[queue] Repurpose worker started
+```
+
+If Redis is not configured, you'll see:
+
+```
+[redis] REDIS_URL not set, using in-memory rate limiting
+```

@@ -1,0 +1,9 @@
+{
+  "title": "Configuration",
+  "pages": [
+    "environment-variables",
+    "database",
+    "redis",
+    "seeding"
+  ]
+}

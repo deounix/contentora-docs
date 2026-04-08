@@ -1,0 +1,71 @@
+---
+title: Templates
+description: Content generation templates with customizable input fields and AI prompts.
+---
+
+Templates are the core building block of Contentora. Each template defines a content type with input fields and an AI prompt.
+
+## Structure
+
+A template consists of:
+
+| Field | Description |
+| --- | --- |
+| Name | Display name (e.g., "Blog Post") |
+| Description | Short explanation of what it generates |
+| Category | Grouping (Blog, Social, Email, etc.) |
+| Icon | Lucide icon name for the UI |
+| Fields | Input fields the user fills in |
+| Prompt | AI prompt template with `{{variable}}` placeholders |
+| isPro | Whether it requires a paid plan |
+| Image Enabled | Whether to generate a featured image |
+
+## Input Fields
+
+Each template has one or more input fields:
+
+| Property | Description |
+| --- | --- |
+| `name` | Field identifier used in the prompt template |
+| `label` | Display label shown to the user |
+| `type` | `text`, `textarea`, or `select` |
+| `required` | Whether the field must be filled |
+| `options` | Dropdown choices (for `select` type) |
+
+## Prompt Template
+
+The prompt uses `{{variable}}` placeholders that get replaced with user inputs:
+
+```
+Write a blog post about {{topic}} in a {{tone_style}} tone.
+Target audience: {{audience}}.
+Include practical tips and examples.
+Length: approximately 800 words.
+```
+
+## Categories
+
+The seeded templates span these categories:
+
+- Blog
+- Social Media
+- Email
+- Advertising
+- SEO
+- E-commerce
+- Video
+- Education
+- Creative Writing
+- Business
+
+## Managing Templates
+
+Admins can create, edit, and delete templates from **Admin > Templates**. The template form includes a live preview of the prompt with sample inputs.
+
+![Templates](/images/user/templates.png)
+
+![Admin Templates](/images/admin/templates.png)
+
+## Credit Usage
+
+Each generation deducts from the user's monthly word limit based on the output length. The word count is calculated from the final generated text.

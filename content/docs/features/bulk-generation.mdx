@@ -1,0 +1,55 @@
+---
+title: Bulk Generation
+description: Generate content at scale from CSV files.
+---
+
+Bulk generation lets users upload a CSV file and generate content for every row using a selected template.
+
+## How It Works
+
+1. User selects a template
+2. Uploads a CSV file (max 5 MB)
+3. Maps CSV columns to template input fields
+4. Selects language and tone
+5. Starts the bulk job
+
+The engine processes each row sequentially, generating content via the generate queue. Progress is saved every 5 rows.
+
+## CSV Format
+
+The CSV should have headers in the first row. Each subsequent row becomes a separate generation:
+
+```csv
+topic,audience,tone_style
+AI in Healthcare,Doctors,Professional
+Remote Work Tips,Managers,Casual
+Cloud Security,CTOs,Technical
+```
+
+## Column Mapping
+
+The UI auto-matches CSV column names to template field names (case-insensitive). You can manually adjust mappings before starting.
+
+## Job Status
+
+Bulk jobs have five statuses:
+
+| Status | Meaning |
+| --- | --- |
+| `pending` | Queued for processing |
+| `processing` | Currently generating rows |
+| `completed` | All rows finished successfully |
+| `partial` | Some rows succeeded, some failed |
+| `failed` | All rows failed |
+
+## Downloading Results
+
+After completion, users can download a CSV of the results containing the original inputs plus the generated output for each row.
+
+![Bulk Generation](/images/user/bulk.png)
+
+## Limits
+
+- Maximum file size: 5 MB
+- Row processing uses the same credit system as individual generations
+- Each row counts as one generation against the monthly word limit

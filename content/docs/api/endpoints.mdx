@@ -1,0 +1,122 @@
+---
+title: API Endpoints
+description: Complete REST API v1 reference for Contentora.
+---
+
+All API v1 endpoints require a valid API token with the appropriate scope. The base URL is `/api/v1`.
+
+## Templates
+
+| Method | Endpoint | Scope | Description |
+| --- | --- | --- | --- |
+| GET | `/v1/templates` | `templates` | List all templates |
+| GET | `/v1/templates/:id` | `templates` | Get template details |
+
+### List Templates
+
+```bash
+curl -H "Authorization: Bearer ct_..." \
+  "https://your-domain.com/api/v1/templates?category=blog&page=1&limit=20"
+```
+
+Query parameters: `category`, `search`, `page`, `limit`.
+
+## Content Generation
+
+| Method | Endpoint | Scope | Description |
+| --- | --- | --- | --- |
+| POST | `/v1/generate` | `generate` | Generate content |
+| GET | `/v1/generate/jobs/:jobId` | `generate` | Check job status |
+| GET | `/v1/generations` | `generate` | List generation history |
+| GET | `/v1/generations/:id` | `generate` | Get a single generation |
+
+### Generate Content
+
+```bash
+curl -X POST -H "Authorization: Bearer ct_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "templateId": "...",
+    "inputs": { "topic": "AI in Healthcare", "tone_style": "Professional" },
+    "language": "English",
+    "tone": "Professional"
+  }' \
+  https://your-domain.com/api/v1/generate
+```
+
+Returns `{ jobId: "..." }`. Poll the job status endpoint until completion.
+
+### Check Job Status
+
+```bash
+curl -H "Authorization: Bearer ct_..." \
+  https://your-domain.com/api/v1/generate/jobs/{jobId}
+```
+
+Returns `{ status: "completed", generationId: "..." }` when done.
+
+## Workflows
+
+| Method | Endpoint | Scope | Description |
+| --- | --- | --- | --- |
+| GET | `/v1/workflows` | `workflows` | List workflows |
+| POST | `/v1/workflows/:id/run` | `workflows` | Run a workflow |
+| GET | `/v1/workflows/runs/:runId` | `workflows` | Check run status |
+
+### Run a Workflow
+
+```bash
+curl -X POST -H "Authorization: Bearer ct_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "inputs": { "topic": "SaaS Pricing" },
+    "language": "English",
+    "tone": "Professional"
+  }' \
+  https://your-domain.com/api/v1/workflows/{workflowId}/run
+```
+
+## Brand Voices
+
+| Method | Endpoint | Scope | Description |
+| --- | --- | --- | --- |
+| GET | `/v1/brand-voices` | `brand-voices` | List brand voices |
+| POST | `/v1/brand-voices` | `brand-voices` | Create brand voice |
+| GET | `/v1/brand-voices/:id` | `brand-voices` | Get brand voice |
+| PUT | `/v1/brand-voices/:id` | `brand-voices` | Update brand voice |
+| DELETE | `/v1/brand-voices/:id` | `brand-voices` | Delete brand voice |
+
+## Projects
+
+| Method | Endpoint | Scope | Description |
+| --- | --- | --- | --- |
+| GET | `/v1/projects` | `projects` | List projects |
+| POST | `/v1/projects` | `projects` | Create project |
+| GET | `/v1/projects/:id` | `projects` | Get project |
+| PUT | `/v1/projects/:id` | `projects` | Update project |
+| DELETE | `/v1/projects/:id` | `projects` | Delete project |
+
+## Repurpose
+
+| Method | Endpoint | Scope | Description |
+| --- | --- | --- | --- |
+| POST | `/v1/repurpose` | `repurpose` | Start repurpose job |
+| GET | `/v1/repurpose/jobs/:jobId` | `repurpose` | Check job status |
+| GET | `/v1/repurpose/:id` | `repurpose` | Get repurpose result |
+
+## Support
+
+| Method | Endpoint | Scope | Description |
+| --- | --- | --- | --- |
+| GET | `/v1/tickets` | `support` | List tickets |
+| POST | `/v1/tickets` | `support` | Create ticket |
+| GET | `/v1/tickets/:id` | `support` | Get ticket |
+| POST | `/v1/tickets/:id/reply` | `support` | Reply to ticket |
+
+## Usage
+
+| Method | Endpoint | Scope | Description |
+| --- | --- | --- | --- |
+| GET | `/v1/usage` | `usage` | Get usage statistics |
+
+Returns current word count, image count, plan limits, and reset date.

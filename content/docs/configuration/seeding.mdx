@@ -1,0 +1,68 @@
+---
+title: Database Seeding
+description: Populate your database with plans, templates, and an admin account.
+---
+
+After setting up MongoDB, seed the database with initial data:
+
+```bash
+yarn seed
+```
+
+## What Gets Seeded
+
+### Subscription Plans
+
+| Plan | Price | Words/Month | Images/Month | Custom Workflows |
+| --- | --- | --- | --- | --- |
+| Free | $0 | 2,500 | 5 | 0 |
+| Pro | $19 | 100,000 | 100 | 3 |
+| Business | $49 | 500,000 | 500 | 15 |
+
+Plans define the feature limits for each user tier. The Free plan uses Ollama (local AI) by default, while Pro and Business use premium AI providers.
+
+### Content Templates
+
+86 templates are seeded across categories including:
+
+- Blog (articles, outlines, introductions)
+- Social Media (tweets, LinkedIn, Instagram)
+- Email (newsletters, cold outreach, follow-ups)
+- Advertising (Google Ads, Facebook Ads, landing pages)
+- SEO (meta descriptions, keyword clusters)
+- E-commerce (product descriptions, reviews)
+- Video (YouTube scripts, video outlines)
+- And more
+
+Each template includes input fields, a generation prompt, and an icon.
+
+### Admin Account
+
+A default admin user is created:
+
+| Field | Value |
+| --- | --- |
+| Email | `admin@contentora.com` |
+| Password | `admin123` |
+| Role | `admin` |
+
+<Callout type="warn">
+Change the admin password immediately after first login. Navigate to the profile settings page to update it.
+</Callout>
+
+## Re-Seeding
+
+Running `yarn seed` again is safe. The seeder uses upsert operations — existing records are updated, not duplicated. New templates will be added and existing ones will be refreshed.
+
+![Admin Plans](/images/admin/plans.png)
+
+![Admin Users](/images/admin/users.png)
+
+## Custom Templates
+
+You can add templates through the admin panel at **Admin > Templates** after seeding. Templates require:
+
+- A name and description
+- One or more input fields (text, textarea, select)
+- A generation prompt with `{{variable}}` placeholders
+- A category and icon

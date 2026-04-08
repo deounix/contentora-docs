@@ -1,0 +1,84 @@
+---
+title: Production Checklist
+description: Everything to configure before going live.
+---
+
+Before deploying to production, verify each item on this checklist.
+
+## Security
+
+- [ ] Change `JWT_SECRET` to a cryptographically random string (32+ characters)
+- [ ] Change `JWT_REFRESH_SECRET` to a different random string
+- [ ] Set `NODE_ENV=production`
+- [ ] Change the default admin password (`admin@contentora.com` / `admin123`)
+- [ ] Set `CLIENT_URL` to your actual frontend domain
+- [ ] Use HTTPS for all traffic
+
+## Database
+
+- [ ] Use a managed MongoDB service (Atlas, DocumentDB) or a secured self-hosted instance
+- [ ] Enable MongoDB authentication
+- [ ] Set up automated backups
+- [ ] Tune `MONGODB_POOL_SIZE` based on expected load (20-50 for production)
+
+## Redis
+
+- [ ] Use a managed Redis service (ElastiCache, Upstash) or secure your instance
+- [ ] Require authentication (`redis://user:password@host:port`)
+- [ ] Set appropriate `maxmemory` based on your traffic
+
+## Stripe
+
+- [ ] Switch from test keys (`sk_test_`) to live keys (`sk_live_`)
+- [ ] Set up the production webhook endpoint
+- [ ] Verify all webhook events are being received
+- [ ] Test a real payment flow end-to-end
+
+## Email
+
+- [ ] Configure production SMTP (SES, Sendgrid, Resend)
+- [ ] Verify sender domain (SPF, DKIM, DMARC)
+- [ ] Test verification and password reset emails
+
+## AI Providers
+
+- [ ] Configure production AI provider API keys
+- [ ] Set appropriate rate limits with your provider
+- [ ] Monitor API usage and costs
+
+## Rate Limiting
+
+- [ ] Ensure Redis is connected (in-memory limits don't work across instances)
+- [ ] Tune `RATE_LIMIT_*` values based on expected usage
+
+## Monitoring
+
+- [ ] Set up log aggregation (engine uses structured logging)
+- [ ] Monitor the `/api/health` endpoint
+- [ ] Set up alerts for queue failures
+- [ ] Track MongoDB and Redis metrics
+
+## Performance
+
+- [ ] Set `QUEUE_*_CONCURRENCY` based on server capacity and AI provider limits
+- [ ] Configure `REQUEST_TIMEOUT_MS` appropriately (30s default may be too low for large generations)
+- [ ] Ensure `BODY_LIMIT` accommodates your largest expected payloads
+
+## Reverse Proxy
+
+For production, place a reverse proxy (Nginx, Caddy, Cloudflare) in front of the engine:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name api.your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:5050;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```

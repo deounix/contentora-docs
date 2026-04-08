@@ -1,0 +1,80 @@
+---
+title: Database
+description: MongoDB setup and configuration for Contentora.
+---
+
+Contentora uses **MongoDB 8** with **Mongoose 9** as the ODM.
+
+## Docker (Recommended)
+
+The included `docker-compose.yml` starts MongoDB with a persistent volume:
+
+```bash
+docker compose up -d mongodb
+```
+
+This starts MongoDB on port `27017` with a database named `contentora`.
+
+Connection details:
+
+```bash
+MONGODB_URI=mongodb://localhost:27017/contentora
+```
+
+## Local Installation
+
+If you prefer to install MongoDB locally, follow the [MongoDB installation guide](https://www.mongodb.com/docs/manual/installation/) for your OS. After installation:
+
+```bash
+mongosh
+use contentora
+```
+
+## Connection Options
+
+Tune these in `.env` based on your deployment:
+
+```bash
+MONGODB_POOL_SIZE=10
+MONGODB_SERVER_TIMEOUT_MS=5000
+MONGODB_SOCKET_TIMEOUT_MS=45000
+```
+
+- **Pool size** — increase for high-concurrency production deployments (20-50 is typical)
+- **Server timeout** — how long to wait for a MongoDB server before failing
+- **Socket timeout** — maximum time for any single database operation
+
+## Data Models
+
+Contentora uses 14 MongoDB collections:
+
+| Collection | Purpose |
+| --- | --- |
+| `users` | User accounts, credentials, plan assignment |
+| `plans` | Subscription tiers with feature limits |
+| `templates` | Content generation templates with prompts |
+| `generations` | Generated content output records |
+| `workflows` | Multi-step pipeline definitions |
+| `workflowruns` | Workflow execution records |
+| `brandvoices` | Brand tone and context profiles |
+| `projects` | Content organization containers |
+| `repurposes` | Content repurposing job records |
+| `subscriptions` | Active Stripe subscription tracking |
+| `apitokens` | API token storage with scopes |
+| `providerconfigs` | AI provider configurations |
+| `tickets` | Support ticket threads |
+| `settings` | Admin key-value settings |
+
+## Backups
+
+For production, set up automated backups:
+
+```bash
+mongodump --uri="mongodb://localhost:27017/contentora" --out=/backups/$(date +%Y%m%d)
+```
+
+Restore from backup:
+
+```bash
+mongorestore --uri="mongodb://localhost:27017/contentora" /backups/20260401/contentora
+```

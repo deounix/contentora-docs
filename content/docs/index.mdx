@@ -1,0 +1,54 @@
+---
+title: Introduction
+description: Contentora is an AI-powered content generation SaaS platform built for the Envato marketplace.
+---
+
+Contentora is a full-stack AI content generation platform that enables users to create blog posts, social media content, emails, ad copy, and more using AI providers like Anthropic, OpenAI, and local Ollama instances.
+
+## Architecture
+
+The platform is a monorepo with two main applications:
+
+- **Engine** — Node.js/Express backend API with MongoDB, Redis, and BullMQ job queues
+- **Studio** — React frontend built with Vite, Tailwind CSS, and React Query
+
+## Key Features
+
+- 86+ content templates across multiple categories
+- Multi-step workflow pipelines
+- Bulk CSV content generation
+- Content repurposing (blog to social, email, etc.)
+- Brand voice profiles for consistent tone
+- Project-based content organization
+- Rich content editor with AI refinement
+- SEO scoring and optimization
+- Full REST API with scoped API tokens
+- Stripe billing with subscription plans
+- Admin panel for full platform management
+
+## Tech Stack
+
+| Layer | Technology |
+| --- | --- |
+| Backend | Express 5, TypeScript, Mongoose 9 |
+| Frontend | React 19, Vite 8, Tailwind CSS 4 |
+| Database | MongoDB 8 |
+| Cache/Queue | Redis 7, BullMQ |
+| AI | Anthropic, OpenAI, Ollama |
+| Payments | Stripe |
+| Email | Nodemailer, React Email |
+
+## Screenshots
+
+### Admin Dashboard
+![Admin Dashboard](/images/admin/dashboard.png)
+
+### User Dashboard
+![User Dashboard](/images/user/dashboard.png)
+
+### Templates
+![Templates](/images/user/templates.png)
+
+## Next Steps
+
+Head to [Quick Start](/docs/quick-start) to get Contentora running locally in under 5 minutes.

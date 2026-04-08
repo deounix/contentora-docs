@@ -1,0 +1,73 @@
+---
+title: Workflows
+description: Chain multiple templates into automated content pipelines.
+---
+
+Workflows let users chain 2-10 templates into a pipeline where each step's output can feed into the next step's inputs.
+
+## How Workflows Work
+
+1. Admin creates a workflow with ordered steps (each step is a template)
+2. User fills in the shared inputs and selects language/tone
+3. The engine runs each step sequentially via the BullMQ queue
+4. Each step's output is available as input for subsequent steps
+5. The final result contains all step outputs in one view
+
+## Input Mapping
+
+Each workflow step has input mappings that define where each template field gets its value:
+
+| Source | Description |
+| --- | --- |
+| `input` | Directly from the user's form inputs |
+| `step` | From a previous step's output |
+
+Unmapped fields automatically match user inputs by field name.
+
+## System vs Custom Workflows
+
+| Type | Created By | Limit |
+| --- | --- | --- |
+| System | Admin | Unlimited |
+| Custom | User | Limited by plan |
+
+Plan workflow limits:
+
+| Plan | Custom Workflows |
+| --- | --- |
+| Free | 0 |
+| Pro | 3 |
+| Business | 15 |
+
+## Creating a Workflow (Admin)
+
+1. Go to **Admin > Workflows**
+2. Click **Create Workflow**
+3. Set name, description, and icon
+4. Add steps (each step selects a template)
+5. Configure input mappings for each step
+6. Toggle Pro-only if needed
+7. Save and activate
+
+## Workflow Execution
+
+Workflows are processed by the BullMQ workflow worker:
+
+- Each step runs as a separate generation job
+- Steps execute sequentially (step 2 waits for step 1)
+- If any step fails, the workflow is marked as failed
+- Users can view real-time progress as each step completes
+
+![Workflows](/images/user/workflows.png)
+
+![Admin Workflows](/images/admin/workflows.png)
+
+## Viewing Results
+
+After completion, users are redirected to the workflow result page showing:
+
+- All step outputs in tabs
+- Per-step word counts
+- Total pipeline duration
+- SEO scoring for each output
+- Copy, export, and editor actions

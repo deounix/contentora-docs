@@ -1,0 +1,93 @@
+---
+title: Docker
+description: Deploy Contentora with Docker Compose.
+---
+
+The repository includes a `docker-compose.yml` that runs the full stack: MongoDB, Redis, Engine API, and Studio frontend.
+
+## Quick Deploy
+
+```bash
+cp .env.example .env
+# Edit .env with production values
+
+docker compose up -d
+```
+
+This starts four services:
+
+| Service | Port | Description |
+| --- | --- | --- |
+| `mongodb` | 27017 | MongoDB 8 with persistent storage |
+| `redis` | 6380 | Redis 7 with AOF persistence |
+| `engine` | 5050 | Backend API |
+| `studio` | 3000 | Frontend (Nginx) |
+
+## Service Details
+
+### MongoDB
+
+- Image: `mongo:8-noble`
+- Volume: `mongodb_data` (persistent)
+- Health check: `mongosh --eval 'db.runCommand("ping")'`
+- Memory: No limit configured (set via MongoDB config if needed)
+
+### Redis
+
+- Image: `redis:7-alpine`
+- Volume: `redis_data` (persistent)
+- Configuration: 256 MB memory, `noeviction` policy, append-only file enabled
+- Health check: `redis-cli ping`
+
+### Engine
+
+- Built from `apps/engine/Dockerfile` (multi-stage)
+- Depends on MongoDB and Redis health checks
+- Reads `.env` from repository root
+- Exposes port `5050`
+
+### Studio
+
+- Built from `apps/studio/Dockerfile` (multi-stage)
+- Nginx serves the built React app
+- Depends on Engine service
+- Exposes port `3000`
+
+## Building Images
+
+To rebuild after code changes:
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+## Seeding in Docker
+
+After the first deploy, seed the database:
+
+```bash
+docker compose exec engine node dist/seeders/run.seed.js
+```
+
+## Viewing Logs
+
+```bash
+# All services
+docker compose logs -f
+
+# Specific service
+docker compose logs -f engine
+```
+
+## Stopping
+
+```bash
+docker compose down
+```
+
+To also remove volumes (deletes all data):
+
+```bash
+docker compose down -v
+```

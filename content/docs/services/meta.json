@@ -1,0 +1,9 @@
+{
+  "title": "Services",
+  "pages": [
+    "ai-providers",
+    "stripe",
+    "email",
+    "image-generation"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "index",
+    "quick-start",
+    "---Configuration---",
+    "...configuration",
+    "---Services---",
+    "...services",
+    "---API---",
+    "...api",
+    "---Features---",
+    "...features",
+    "---Deployment---",
+    "...deployment"
+  ]
+}

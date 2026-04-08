@@ -1,0 +1,62 @@
+---
+title: Rate Limiting
+description: API rate limit configuration and behavior.
+---
+
+Contentora applies rate limiting at three levels to prevent abuse. All limits are configurable via [environment variables](/docs/configuration/environment-variables).
+
+## Rate Limit Tiers
+
+| Limiter | Window | Max Requests | Applies To |
+| --- | --- | --- | --- |
+| API | 15 minutes | 2,000 | All `/api/*` routes |
+| Auth | 15 minutes | 100 | `/api/auth/*` routes |
+| Generate | 1 minute | 120 | `/api/generate/*` and `/api/v1/generate` |
+
+Admin users bypass the API and Generate limiters.
+
+## Response Headers
+
+Rate limit information is included in response headers (standard headers):
+
+```
+RateLimit-Limit: 2000
+RateLimit-Remaining: 1995
+RateLimit-Reset: 1712620800
+```
+
+## When Rate Limited
+
+Exceeding the limit returns HTTP `429 Too Many Requests`:
+
+```json
+{
+  "message": "Too many requests, please try again later"
+}
+```
+
+## Storage Backend
+
+| Backend | Behavior |
+| --- | --- |
+| Redis | Limits are shared across all server instances |
+| In-memory | Limits are per-process (resets on restart) |
+
+For production with multiple server instances, Redis is required for accurate rate limiting.
+
+## Customizing Limits
+
+Override defaults in `.env`:
+
+```bash
+# Double the API limit
+RATE_LIMIT_API_MAX=4000
+
+# Tighter auth protection
+RATE_LIMIT_AUTH_MAX=50
+RATE_LIMIT_AUTH_WINDOW_MS=600000
+
+# More generous generation limit
+RATE_LIMIT_GENERATE_MAX=200
+RATE_LIMIT_GENERATE_WINDOW_MS=60000
+```

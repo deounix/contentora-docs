@@ -1,0 +1,88 @@
+---
+title: Stripe
+description: Set up Stripe for subscription billing and payments.
+---
+
+Contentora uses Stripe for subscription management, checkout sessions, and recurring billing.
+
+## Setup
+
+### 1. Create a Stripe Account
+
+Sign up at [dashboard.stripe.com](https://dashboard.stripe.com) and get your API keys from **Developers > API Keys**.
+
+### 2. Configure Stripe in Admin
+
+1. Log in as admin
+2. Go to **Admin > Settings**
+3. Enter your **Stripe Secret Key** (starts with `sk_test_` or `sk_live_`)
+4. Enter your **Stripe Webhook Secret** (starts with `whsec_`)
+
+<Callout type="warn">
+Never expose your Stripe secret key in client-side code or commit it to version control. It is stored securely in the database settings.
+</Callout>
+
+### 3. Set Up Webhooks
+
+Create a webhook endpoint in the Stripe Dashboard:
+
+1. Go to **Developers > Webhooks**
+2. Add endpoint: `https://your-domain.com/api/billing/webhook`
+3. Select events:
+   - `checkout.session.completed`
+   - `invoice.payment_succeeded`
+   - `invoice.payment_failed`
+   - `customer.subscription.updated`
+   - `customer.subscription.deleted`
+4. Copy the webhook signing secret and add it to Admin > Settings
+
+For local development, use the Stripe CLI:
+
+```bash
+stripe listen --forward-to localhost:5050/api/billing/webhook
+```
+
+### 4. Sync Products
+
+On server startup, Contentora automatically syncs your seeded plans to Stripe products. Paid plans get a Stripe product and price created automatically.
+
+You can also manually trigger this from the admin panel.
+
+## How Billing Works
+
+### Upgrades
+
+When a user upgrades to a higher-priced plan:
+- If they have an active Stripe subscription, the existing subscription is updated with prorated charges
+- If they don't have a subscription, a Stripe Checkout session is created
+- Credits reset immediately upon upgrade
+
+### Downgrades
+
+When a user downgrades:
+- **To Free**: The current subscription is set to cancel at period end. The user keeps their current limits until the billing period ends.
+- **To a lower paid plan**: The subscription is updated at the next billing cycle. Limits remain until the current period ends.
+
+### Cancellation
+
+Users can cancel a pending downgrade from the billing page, which restores their current plan.
+
+![Billing Page](/images/user/billing.png)
+
+## Stripe Objects
+
+| Contentora Entity | Stripe Object |
+| --- | --- |
+| Plan | Product + Price |
+| Subscription | Subscription |
+| Checkout | Checkout Session |
+
+## Testing
+
+Use Stripe's test mode keys (`sk_test_*`) during development. Test card numbers:
+
+| Card | Result |
+| --- | --- |
+| `4242 4242 4242 4242` | Successful payment |
+| `4000 0000 0000 0002` | Declined |
+| `4000 0000 0000 3220` | 3D Secure required |
